@@ -46,6 +46,7 @@ void BinarySearchTree::printLevelOrder () {
 
 void BinarySearchTree::printInorder () {
   printInorder(root);
+  cout << endl;
 }
 
 void BinarySearchTree::printInorder (struct node *curr_node) {
@@ -144,11 +145,5 @@ int main(int argc, char *argv[])
 	bst.printInorder();
   cout << "Tree in level order: " << endl;
 	bst.printLevelOrder();
-
-  /*
-  cout << "dist of 7 from root: " <<  bst.distToRoot(7) << endl;
-	cout << "LCA of 4,7: " << bst.leastCommonAncestor(4, 7) << endl;
-	cout << "distance between 21,1: " << bst.distBtwnNodes(21, 1) << endl;
-  */
 	return 0;
 }
