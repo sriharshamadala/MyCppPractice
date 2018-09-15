@@ -31,15 +31,3 @@ void printArray(const T *arr, int array_length) {
   }
   cout << endl;
 }
-
-// Driver program
-int main()
-{
-  int arr[] = {12, 11, 13, 5, 6, 7};
-  int n = sizeof(arr)/sizeof(arr[0]);
-
-  bubbleSort<int> (arr, n);
-
-  cout << "Sorted array is \n";
-  printArray<int> (arr, n);
-}
