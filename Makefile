@@ -32,7 +32,7 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = bubble_sort_unittest
+TESTS = bubble_sort_unittest graph_unittest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -74,9 +74,18 @@ gtest_main.a : gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
+# Bubble sort unit test
 bubble_sort_unittest.o : $(TEST_DIR)/bubble_sort_unittest.cpp \
 	$(USER_DIR)/bubble_sort.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/bubble_sort_unittest.cpp
 
 bubble_sort_unittest : bubble_sort_unittest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+# Graph unit test
+graph_unittest.o : $(TEST_DIR)/graph_unittest.cpp \
+	$(USER_DIR)/graph.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/graph_unittest.cpp
+
+graph_unittest : graph_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
