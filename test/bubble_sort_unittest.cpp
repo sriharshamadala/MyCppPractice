@@ -53,3 +53,12 @@ TEST (BubbleSortTest, testOneElementSort) {
 
   EXPECT_EQ(26, arr[0]);
 }
+
+TEST (BubbleSortTest, testZeroElementSort) {
+  int arr[] = {};
+  int n = sizeof(arr)/sizeof(arr[0]);
+
+  bubbleSort<int> (arr, n);
+
+  EXPECT_EQ(0, n);
+}
