@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
-#include <deque>
+#include <deque>      // For BFS
+#include <utility>    // for std::make_pair
 
 using namespace std;
 
@@ -8,7 +9,8 @@ template <typename T>
 class Node {
   private:
     T key_;
-    list<Node<T>*> children_;
+    // Each edge has a destination and a weight.
+    list<pair<Node<T>*, int>> children_;
     // Needed for graph traversal algorithms
     bool is_visited_;
   
@@ -20,7 +22,7 @@ class Node {
     T getKey () {
       return key_;
     }
-    list<Node<T>*>& getChildren () {
+    list<pair<Node<T>*, int>>& getChildren () {
       return children_;
     }
     bool isVisited () {
@@ -44,9 +46,9 @@ class Graph {
     void printAdjacencyList () {
       for (auto node : adjacency_list_) {
         cout << node->getKey() << ": ";
-        auto children = node->getChildren();
-        for (auto child : children) {
-          cout << child->getKey() << " ";
+        auto temp_pair_list = node->getChildren();
+        for (auto temp_pair : temp_pair_list) {
+          cout << (temp_pair.first)->getKey() << " ";
         }
         cout << endl;
       }
@@ -55,9 +57,10 @@ class Graph {
     void printDFS (Node<T> *root) {
       cout << root->getKey() << endl;
       root->visited();
-      for (auto node : root->getChildren()) {
-        if (!node->isVisited()) {
-          printDFS(node);
+      auto temp_pair_list = root->getChildren();
+      for (auto temp_pair : temp_pair_list) {
+        if (!((temp_pair.first)->isVisited())) {
+          printDFS(temp_pair.first);
         }
       }
     }
@@ -65,17 +68,18 @@ class Graph {
     void printBFS (Node<T> *root) {
       deque<Node<T>*> my_deque;
       my_deque.push_back(root);
+      root->visited();
 
       while (!my_deque.empty()) {
         Node<T> * temp_node = my_deque.front();
         my_deque.pop_front();
-        if (!temp_node->isVisited()) {
-          cout << temp_node->getKey() << endl;
-          temp_node->visited();
-        }
-        for (auto node : temp_node->getChildren()) {
-          if (!node->isVisited()) {
-            my_deque.push_back(node);
+        cout << temp_node->getKey() << endl;
+        
+        auto temp_pair_list = temp_node->getChildren();
+        for (auto temp_pair : temp_pair_list) {
+          if (!((temp_pair.first)->isVisited())) {
+            my_deque.push_back(temp_pair.first);
+            temp_pair.first->visited();
           }
         }
       }

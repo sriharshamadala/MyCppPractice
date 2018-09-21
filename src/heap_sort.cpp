@@ -10,13 +10,26 @@ class MaxHeap {
   private:
     T * arr;
     int arr_length;
+    void swap (int index1, int index2);
+
   public:
     MaxHeap (T *data, int n) {
       arr = data;
       arr_length = n;
     }
     void maxHeapify (int node_index);
-    void swap (int index1, int index2);
+    
+    T extractMax () {
+      // Swap the max with end of heap element.
+      swap(0, arr_length - 1);
+      T result = arr[arr_length - 1];
+      arr_length--;
+
+      // Make sure the heap structure is preserved.
+      maxHeapify(0);
+      return result;
+    }
+
     void printHeap ();
     void heapSort ();
     void printArray ();
@@ -77,12 +90,8 @@ void MaxHeap<T>::heapSort () {
   }
 
   while (arr_length > 0) {
-    // the root contains the maximum element.
-    // pop the root and decrement heap_length by one.
     cout << arr[0] << " ";
-    swap(0, arr_length - 1);
-    arr_length--;
-    maxHeapify(0);
+    extractMax();
   }
   cout << endl;
 }
