@@ -108,3 +108,35 @@ TEST_F (GraphTest, printBFS) {
   Graph<char> my_graph(adjacency_list__2_);
   my_graph.printBFS(adjacency_list__2_.front());
 }
+
+TEST_F (GraphTest, dijkstra) {
+  Graph<char> my_graph(adjacency_list__2_);
+  my_graph.shortestPath(adjacency_list__2_.front(), adjacency_list__2_.back());
+  auto it = adjacency_list__2_.begin();
+  EXPECT_EQ((*it)->getShortestPath(), 0);
+  it++;
+  EXPECT_EQ((*it)->getShortestPath(), 4);
+  EXPECT_EQ((*it)->getPrevNode()->getKey(), 'c');
+  it++;
+  EXPECT_EQ((*it)->getShortestPath(), 3);
+  EXPECT_EQ((*it)->getPrevNode()->getKey(), 'a');
+  it++;
+  EXPECT_EQ((*it)->getShortestPath(), 4);
+  EXPECT_EQ((*it)->getPrevNode()->getKey(), 'c');
+  it++;
+  EXPECT_EQ((*it)->getShortestPath(), 2);
+  EXPECT_EQ((*it)->getPrevNode()->getKey(), 'a');
+  it++;
+  EXPECT_EQ((*it)->getShortestPath(), 7);
+  EXPECT_EQ((*it)->getPrevNode()->getKey(), 'h');
+  it++;
+  EXPECT_EQ((*it)->getShortestPath(), 6);
+  EXPECT_EQ((*it)->getPrevNode()->getKey(), 'd');
+  it++;
+  EXPECT_EQ((*it)->getShortestPath(), 5);
+  EXPECT_EQ((*it)->getPrevNode()->getKey(), 'd');
+  it++;
+  EXPECT_EQ((*it)->getShortestPath(), 8);
+  EXPECT_EQ((*it)->getPrevNode()->getKey(), 'g');
+  it++;
+}
