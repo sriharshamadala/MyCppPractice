@@ -1,1 +1,5 @@
 build/*
+*.o
+*.a
+*.swp
+*.swo
