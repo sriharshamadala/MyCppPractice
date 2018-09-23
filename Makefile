@@ -32,7 +32,9 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = bubble_sort_unittest graph_unittest
+TESTS = bubble_sort_unittest \
+				graph_unittest \
+				expression_evaluation_unittest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -89,3 +91,12 @@ graph_unittest.o : $(TEST_DIR)/graph_unittest.cpp \
 
 graph_unittest : graph_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+# Expression evaluation unit test
+expression_evaluation_unittest.o : $(TEST_DIR)/expression_evaluation_unittest.cpp \
+	$(USER_DIR)/expression_evaluation.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/expression_evaluation_unittest.cpp
+
+expression_evaluation_unittest : expression_evaluation_unittest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
