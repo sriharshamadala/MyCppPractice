@@ -24,7 +24,7 @@ class HashTable {
     void insert (string key, string value);
     int hashingFunction (string key);
     struct node * findEntry(string key);
-    void removeEntry(string key);
+    void remove(string key);
 };
 
 #endif

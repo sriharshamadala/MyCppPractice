@@ -56,7 +56,7 @@ struct node * HashTable::findEntry(string key) {
   return NULL;
 }
 
-void HashTable::removeEntry (string key) {
+void HashTable::remove (string key) {
   int bucket_index = hashingFunction(key);
   auto curr_list = hash_map_[bucket_index];
   for (auto it = curr_list.begin(); it != curr_list.end(); ++it) {

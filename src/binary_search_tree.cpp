@@ -14,7 +14,7 @@ class BinarySearchTree {
     struct node *root;
   public:
     BinarySearchTree (struct node *root_node);
-    void insertNode (struct node *new_node);
+    void insert (struct node *new_node);
     void printLevelOrder ();
     void printInorder (struct node *curr_node);
     void printInorder ();
@@ -105,7 +105,7 @@ int BinarySearchTree::distBtwnNodes(int node1, int node2) {
 	return dist_1;
 }
 
-void BinarySearchTree::insertNode (struct node *new_node) {
+void BinarySearchTree::insert (struct node *new_node) {
   struct node *temp_node = root;
   while (temp_node) {
     if (new_node->key < temp_node->key) {
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
   BinarySearchTree bst(nodeArr);
 
   for (int ii = 1; ii < argc - 1; ++ii) {
-    bst.insertNode(nodeArr + ii);
+    bst.insert(nodeArr + ii);
   }
   cout << "Tree in inorder: " << endl;
 	bst.printInorder();
