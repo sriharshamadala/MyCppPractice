@@ -30,12 +30,37 @@ void TicTacToe::printBoard () {
 }
 
 void TicTacToe::play () {
-  printBoard();
-  cout << "Where would you like to place your 'X'? [1-" << to_string(size_ * size_) << "] ";
+  // Computers turn.
+  TttNode * temp_node;
+  int min = kMaxInfinity;
+  for (int ii = 0; ii < current_node_playing->nf_children; ++ii) {
+    if (current_node_playing->children[ii].score < min) {
+      temp_node = &(current_node_playing->children[ii]);
+      min = current_node_playing->children[ii].score;
+    }
+  }
+  current_node_playing = temp_node;
+  // Simply copy the board of this node.
+  copyBoardPatterns(board_, current_node_playing->board);
+  cout << "Computer played !" << endl;
+  if (current_node_playing->nf_children == 0) {
+    // Reached terminal node. End of game.
+    is_game_over_ = true;
+    if (current_node_playing->score == 0) {
+      cout << "Game Over! It's a tie!!!" << endl;
+    } else {
+      cout << "Game Over! Computer Won!!!" << endl;
+    }
+    return;
+  }
+
+  // Human turn.
   int players_choice;
-  cin >> players_choice;
-  // TODO Validate players choice
-  update(players_choice, "X");
+  do {
+    printBoard();
+    cout << "Where would you like to place your 'X'? [1-" << to_string(size_ * size_) << "] ";
+    cin >> players_choice;
+  } while (!update(players_choice, "X"));
   printBoard();
   for (int ii = 0; ii < current_node_playing->nf_children; ++ii) {
     if (current_node_playing->children[ii].board[players_choice - 1] == 'X') {
@@ -53,57 +78,64 @@ void TicTacToe::play () {
     }
     return;
   }
-  TttNode * temp_node;
-  int min = kMaxValidScore;
-  for (int ii = 0; ii < current_node_playing->nf_children; ++ii) {
-    if (current_node_playing->children[ii].score < min) {
-      temp_node = &(current_node_playing->children[ii]);
-      min = current_node_playing->children[ii].score;
-    }
-  }
-  current_node_playing = temp_node;
-  // Simply copy the board of this node.
-  copyBoardPatterns(board_, current_node_playing->board);
-  cout << "Computer played !" << endl;
-  printBoard();
-  if (current_node_playing->nf_children == 0) {
-    // Reached terminal node. End of game.
-    is_game_over_ = true;
-    if (current_node_playing->score == 0) {
-      cout << "Game Over! It's a tie!!!" << endl;
-    } else {
-      cout << "Game Over! Computer Won!!!" << endl;
-    }
-    return;
-  }
 }
 
-void TicTacToe::createChildrenAtDepth (TttNode *curr_node, int depth) {
+int TicTacToe::minimax (TttNode *curr_node, int depth, int alpha, int beta) {
   if (depth >= size_ * size_) {
-    return;
-  }
-  if ((curr_node->score == 10) || (curr_node->score == -10)) {
-    curr_node->nf_children = 0;
-    curr_node->children = NULL;
+    // Terminal node.
+    if ((curr_node->score != 10) && (curr_node->score != -10)) {
+      // Tie.
+      curr_node->score = 0;
+    }
+    return curr_node->score;
+  } else if ((curr_node->score == 10) || (curr_node->score == -10)) {
+    // Terminal node.
+    return curr_node->score;
   } else {
+    // Create children and evaluate the board.
     int curr_branching_factor = size_ * size_ - depth;
     TttNode * children = new TttNode[curr_branching_factor];
     curr_node->children = children;
     curr_node->nf_children = curr_branching_factor;
     // Create boards and score them.
-    for (int ii = 0; ii < curr_branching_factor; ++ii) {
-      // Copy parent's board.
-      children[ii].board = curr_node->board;
-      int position = findIthAvailable(curr_node->board, ii + 1);
-      if ((depth % 2) == 0) {
+    if ((depth % 2) == 0) {
+      // Maximizing node
+      int max_eval = kMinInfinity;
+      for (int ii = 0; ii < curr_branching_factor; ++ii) {
+        // Copy parent's board.
+        children[ii].board = curr_node->board;
+        int position = findIthAvailable(curr_node->board, ii + 1);
         children[ii].board[position] = 'X';
-      } else {
-        children[ii].board[position] = 'O';
+        children[ii].score = staticEvaluation(children[ii].board, size_);
+        int eval = minimax(&children[ii], depth + 1, alpha, beta);
+        max_eval = max(eval, max_eval);
+        alpha = max(alpha, eval);
+        if (beta <= alpha) {
+          // No need to evaluate the rest of the children. Prune.
+          break;
+        }
       }
-      children[ii].score = scoreTheBoard(children[ii].board, size_);
-    }
-    for (int ii = 0; ii < curr_branching_factor; ++ii) {
-      createChildrenAtDepth(&children[ii], depth + 1);
+      curr_node->score = max_eval;
+      return max_eval;
+    } else {
+      // Minimizing node
+      int min_eval = kMaxInfinity;
+      for (int ii = 0; ii < curr_branching_factor; ++ii) {
+        // Copy parent's board.
+        children[ii].board = curr_node->board;
+        int position = findIthAvailable(curr_node->board, ii + 1);
+        children[ii].board[position] = 'O';
+        children[ii].score = staticEvaluation(children[ii].board, size_);
+        int eval = minimax(&children[ii], depth + 1, alpha, beta);
+        min_eval = min(eval, min_eval);
+        beta = min(eval, beta);
+        if (beta <= alpha) {
+          // No need to evaluate the rest of the children. Prune.
+          break;
+        }
+      }
+      curr_node->score = min_eval;
+      return min_eval;
     }
   }
 }
@@ -114,41 +146,16 @@ void TicTacToe::createMinMaxTree () {
   for (int ii = 0; ii < size_ * size_; ++ii) {
     root_node->board.push_back('-');
   }
-  root_node->score = 0;
+  printBoard();
+  cout << "Where would you like to place your 'X'? [1-" << to_string(size_ * size_) << "] ";
+  int players_choice;
+  cin >> players_choice;
+  root_node->board[players_choice - 1] = 'X';
+  board_[players_choice - 1] = "X";
+  printBoard();
   minimax_tree_.assignRoot(root_node);
-  createChildrenAtDepth(root_node, 0);
-}
-
-int TicTacToe::updateScoresAtDepth (TttNode *curr_node, int depth) {
-  if (curr_node->nf_children == 0) {
-    // Terminal node
-    return curr_node->score;
-  } else {
-    int max = kMinValidScore;
-    int min = kMaxValidScore;
-    for (int ii = 0; ii < curr_node->nf_children; ++ii) {
-      int curr_child_score = updateScoresAtDepth(&curr_node->children[ii], depth + 1);
-      if (curr_child_score > max) {
-        max = curr_child_score;
-      }
-      if (curr_child_score < min) {
-        min = curr_child_score;
-      }
-    }
-    if ((depth % 2) == 0) {
-      // return the maximum of all the child scores.
-      curr_node->score = max;
-      return max;
-    } else {
-      // return the minimum of all the child scores.
-      curr_node->score = min;
-      return min;
-    }
-  }
-}
-
-void TicTacToe::propagateScores () {
-  updateScoresAtDepth(minimax_tree_.getRoot(), 0);
+  minimax(root_node, 1, kMinInfinity, kMaxInfinity);
+  current_node_playing = root_node;
 }
 
 // Utility functions
@@ -234,31 +241,22 @@ bool diagCheckForWin (const vector<char>& board, int size, char ox) {
   return false;
 }
 
-int scoreTheBoard (const vector<char>& board, int size) {
-  int score = 0;
+int staticEvaluation (const vector<char>& board, int size) {
+  int score = kMaxInfinity;
   
   if (rowCheckForWin(board, size, 'X')) {
-    //cout << "row check X" << endl;
     score = 10;
   } else if (rowCheckForWin(board, size, 'O')) {
-    //cout << "row check O" << endl;
     score = -10;
   } else if (colCheckForWin(board, size, 'X')) {
-    //cout << "col check X" << endl;
     score = 10;
   } else if (colCheckForWin(board, size, 'O')) {
-    //cout << "col check O" << endl;
     score = -10;
   } else if (diagCheckForWin(board, size, 'X')) {
-    //cout << "diag check X" << endl;
     score = 10;
   } else if (diagCheckForWin(board, size, 'O')) {
-    //cout << "diag check O" << endl;
     score = -10;
-  } else {
-    score = 0;
-  }
-
+  } 
   return score;
 } 
 
@@ -280,13 +278,7 @@ int main () {
   }
 
   TicTacToe my_ttt(ttt_size);
-  cout << "Loading..." << endl;
   my_ttt.createMinMaxTree();
-  //my_ttt.minimax_tree_.inorder(printScore);
-  cout << string(50, '+') << endl;
-  my_ttt.propagateScores();
-  //my_ttt.minimax_tree_.inorder(printScore);
-  my_ttt.current_node_playing = my_ttt.minimax_tree_.getRoot();
   while (!my_ttt.isGameOver()) {
     my_ttt.play();
   }

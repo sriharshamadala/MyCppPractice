@@ -3,12 +3,20 @@
 #include <vector>
 #include <cmath>    // for log10
 #include "tree.h"   // for minimax tree.
+#include <climits>  // for INT_MIN, INT_MAX; alpha beta pruning.
 
 using namespace std;
 
-// XXX Choose this numbers outside the valid range of scores.
-const int kMaxValidScore = 100;
-const int kMinValidScore = -100;
+const int kMaxInfinity = INT_MAX;
+const int kMinInfinity = INT_MIN;
+
+inline int max (int a, int b) {
+  return (a >= b) ? a : b;
+}
+
+inline int min (int a, int b) {
+  return (a <= b) ? a : b;
+}
 
 // XXX Each node having a copy of the board is inefficient.
 struct TttNode {
@@ -16,10 +24,14 @@ struct TttNode {
   int nf_children;
   struct TttNode * children;
   vector<char>board;
+  TttNode () {
+    score = kMaxInfinity;
+  }
 };
 
 class TicTacToe {
   private:
+    Tree<TttNode> minimax_tree_;
     int size_;
     vector<string> board_;
     vector<string> spacing_;
@@ -27,11 +39,9 @@ class TicTacToe {
     int min_spacing_;
     int turn_count_;
     bool is_game_over_;
+    TttNode * current_node_playing;
 
   public:
-    TttNode * current_node_playing;
-    // TODO Debug-only; move to private
-    Tree<TttNode> minimax_tree_;
     TicTacToe (int size, bool comp_starts = false);
     ~TicTacToe () {}
     
@@ -45,17 +55,22 @@ class TicTacToe {
       return is_game_over_;
     }
     
-    void update (int position, string ox) {
-      board_[position - 1] = ox;
-      spacing_[position - 1] = string(max_digits_ + min_spacing_ - 1, ' ');
+    bool update (int position, string ox) {
+      if ((board_[position - 1] == "X") 
+          || (board_[position - 1] == "O")) {
+        cout << "Invalid choice! Try again!" << endl;
+        return false;
+      } else {
+        board_[position - 1] = ox;
+        spacing_[position - 1] = string(max_digits_ + min_spacing_ - 1, ' ');
+        return true;
+      }
     }
     
     void play ();
 
-    void createChildrenAtDepth (TttNode *curr_node, int depth);
+    int minimax (TttNode *curr_node, int depth, int alpha, int beta);
     void createMinMaxTree ();
-    int updateScoresAtDepth (TttNode *curr_node, int depth);
-    void propagateScores ();
 
 };
 
@@ -71,7 +86,7 @@ int findIthAvailable (vector<char>& board, int i);
 // returns 0 if neither wins.
 // XXX If score is 0 and all the positions on the board are filled, its a tie.
 // XXX We assume that the board has only one winner if at all.
-int scoreTheBoard (const vector<char>& board, int size);
+int staticEvaluation (const vector<char>& board, int size);
 
 bool diagCheckForWin (const vector<char>& board, int size, string ox);
 bool colCheckForWin (const vector<char>& board, int size, string ox);
