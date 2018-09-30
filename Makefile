@@ -34,7 +34,8 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 # created to the list.
 TESTS = bubble_sort_unittest \
 				graph_unittest \
-				expression_evaluation_unittest
+				expression_evaluation_unittest \
+				disjoint_set_unittest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -98,5 +99,13 @@ expression_evaluation_unittest.o : $(TEST_DIR)/expression_evaluation_unittest.cp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/expression_evaluation_unittest.cpp
 
 expression_evaluation_unittest : expression_evaluation_unittest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+# Disjoint set unit test
+disjoint_set_unittest.o : $(TEST_DIR)/disjoint_set_unittest.cpp \
+	$(USER_DIR)/disjoint_set.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/disjoint_set_unittest.cpp
+
+disjoint_set_unittest : disjoint_set_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
