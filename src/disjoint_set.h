@@ -20,6 +20,7 @@ class DisjointSet {
   private:
     map<T*, int> map_;
     vector<T*> parents_;
+    vector<int> rank_;
     int nf_disjoint_sets_ = 0;
 
     void updateParent (T * element, T * parent_to_be) {
@@ -32,8 +33,13 @@ class DisjointSet {
       for (int ii = 0; ii < arr_size; ++ii) {
         map_[&arr[ii]] = ii;
         parents_.push_back(&arr[ii]);
+        rank_.push_back(0);
       }
       nf_disjoint_sets_ = arr_size;
+    }
+
+    DisjointSet () {
+      nf_disjoint_sets_ = 0;
     }
 
     /*
@@ -42,6 +48,7 @@ class DisjointSet {
     void insert (T * element) {
       map_[element] = map_.size();
       parents_.push_back(element);
+      rank_.push_back(0);
       nf_disjoint_sets_++;
     }
 
@@ -52,6 +59,7 @@ class DisjointSet {
       for (int ii = 0; ii < arr_size; ++ii) {
         map_[&arr[ii]] = map_.size() + ii;
         parents_.push_back(&arr[ii]);
+        rank_.push_back(0);
       }
       nf_disjoint_sets_ += arr_size;
     }
@@ -61,7 +69,16 @@ class DisjointSet {
       T * parent2 = find(element2);
       if (parent1 != parent2) {
         // Both the elements belong to different sets.
-        updateParent(parent2, parent1);
+        int rank1 = rank_[map_[parent1]];
+        int rank2 = rank_[map_[parent2]];
+        if (rank1 < rank2) {
+          updateParent(parent1, parent2);
+        } else if (rank1 > rank2) {
+          updateParent(parent2, parent1);
+        } else {
+          updateParent(parent1, parent2);
+          rank_[map_[parent2]]++;
+        }
         nf_disjoint_sets_--;
       }
     }
@@ -73,6 +90,7 @@ class DisjointSet {
       T * parent = element;
       T * temp_element;
       int index;
+      int count = 0;
       do {
         temp_element = parent;
         try {
@@ -81,10 +99,17 @@ class DisjointSet {
           cout << "Unable to find this element in the set! " << e.what() << endl;
         }
         parent = parents_[index];
+        count++;
       } while (parent != temp_element);
 
       // Path compression.
       updateParent(element, parent);
+      int rank_e = rank_[map_[element]];
+      int rank_p = rank_[map_[parent]];
+      if (count - 1 + rank_e == rank_p) {
+        // we are path compressing the deepest path. update rank.
+        rank_[map_[element]] = ((count - 1) < (rank_e + 1)) ? rank_e + 1 : count - 1;
+      }
 
       return parent;
     }
