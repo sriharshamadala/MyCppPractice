@@ -3,6 +3,10 @@
  * which is commonly used in the Union-Find algorithm.
  * We also use path compression to decrease the amortized cost
  * of doing more Unions and Finds.
+ *
+ * Space complexity = O(N)
+ * Time complexity of find() and Union () = O(log N) -> amortized
+ *
  */
 
 #include <iostream>
@@ -16,6 +20,7 @@ class DisjointSet {
   private:
     map<T*, int> map_;
     vector<T*> parents_;
+    int nf_disjoint_sets_ = 0;
 
     void updateParent (T * element, T * parent_to_be) {
       int index = map_[element];
@@ -28,6 +33,7 @@ class DisjointSet {
         map_[&arr[ii]] = ii;
         parents_.push_back(&arr[ii]);
       }
+      nf_disjoint_sets_ = arr_size;
     }
 
     /*
@@ -36,6 +42,7 @@ class DisjointSet {
     void insert (T * element) {
       map_[element] = map_.size();
       parents_.push_back(element);
+      nf_disjoint_sets_++;
     }
 
     /*
@@ -46,6 +53,7 @@ class DisjointSet {
         map_[&arr[ii]] = map_.size() + ii;
         parents_.push_back(&arr[ii]);
       }
+      nf_disjoint_sets_ += arr_size;
     }
 
     void Union (T *element1, T *element2) {
@@ -54,6 +62,7 @@ class DisjointSet {
       if (parent1 != parent2) {
         // Both the elements belong to different sets.
         updateParent(parent2, parent1);
+        nf_disjoint_sets_--;
       }
     }
 
@@ -78,5 +87,9 @@ class DisjointSet {
       updateParent(element, parent);
 
       return parent;
+    }
+
+    int numberOfDisjointSets () {
+      return nf_disjoint_sets_;
     }
 };
