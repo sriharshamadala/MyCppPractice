@@ -118,3 +118,87 @@ class DisjointSet {
       return nf_disjoint_sets_;
     }
 };
+
+// If each element of the set is somehow mapped to a continous range
+// of numbers from 0...N - 1, we could use the following faster implementation.
+template <>
+class DisjointSet<int> {
+  private:
+    vector<int> parents_;
+    vector<int> rank_;
+    int nf_disjoint_sets_ = 0;
+
+    void updateParent (int element, int parent_to_be) {
+      parents_[element] = parent_to_be;
+    }
+
+  public:
+    DisjointSet (int arr_size) {
+      for (int ii = 0; ii < arr_size; ++ii) {
+        parents_.push_back(ii);
+        rank_.push_back(0);
+      }
+      nf_disjoint_sets_ = arr_size;
+    }
+
+    DisjointSet () {
+      nf_disjoint_sets_ = 0;
+    }
+
+    /*
+     * Insert a new element as a disjoint set.
+     */
+    void insert (int element) {
+      parents_.push_back(element);
+      rank_.push_back(0);
+      nf_disjoint_sets_++;
+    }
+
+    void Union (int element1, int element2) {
+      int parent1 = find(element1);
+      int parent2 = find(element2);
+      if (parent1 != parent2) {
+        // Both the elements belong to different sets.
+        int rank1 = rank_[parent1];
+        int rank2 = rank_[parent2];
+        if (rank1 < rank2) {
+          updateParent(parent1, parent2);
+        } else if (rank1 > rank2) {
+          updateParent(parent2, parent1);
+        } else {
+          updateParent(parent1, parent2);
+          rank_[parent2]++;
+        }
+        nf_disjoint_sets_--;
+      }
+    }
+
+    /*
+     * Return the root of the set this element belongs to.
+     */
+    int find (int element) {
+      int parent = element;
+      int temp_element;
+      int count = 0;
+      do {
+        temp_element = parent;
+        parent = parents_[temp_element];
+        count++;
+      } while (parent != temp_element);
+
+      // Path compression.
+      updateParent(element, parent);
+      int rank_e = rank_[element];
+      int rank_p = rank_[parent];
+      if (count - 1 + rank_e == rank_p) {
+        // we are path compressing the deepest path. update rank.
+        rank_[element] = ((count - 1) < (rank_e + 1)) ? rank_e + 1 : count - 1;
+      }
+
+      return parent;
+    }
+
+    int numberOfDisjointSets () {
+      return nf_disjoint_sets_;
+    }
+};
