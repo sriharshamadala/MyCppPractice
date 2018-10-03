@@ -1,3 +1,6 @@
+#ifndef GRAPH_H
+#define GRAPH_H
+
 #include <iostream>
 #include <list>
 #include <deque>      // For BFS
@@ -175,3 +178,5 @@ class Graph {
       cout << endl;
     }
 };
+
+#endif

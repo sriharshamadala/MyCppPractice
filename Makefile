@@ -35,7 +35,8 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 TESTS = bubble_sort_unittest \
 				graph_unittest \
 				expression_evaluation_unittest \
-				disjoint_set_unittest
+				disjoint_set_unittest \
+				recursion_to_iteration_unittest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -107,5 +108,13 @@ disjoint_set_unittest.o : $(TEST_DIR)/disjoint_set_unittest.cpp \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/disjoint_set_unittest.cpp
 
 disjoint_set_unittest : disjoint_set_unittest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+# Recurstion to iteration unit test
+recursion_to_iteration_unittest.o : $(TEST_DIR)/recursion_to_iteration_unittest.cpp \
+	$(USER_DIR)/recursion_to_iteration.h $(USER_DIR)/graph.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/recursion_to_iteration_unittest.cpp
+
+recursion_to_iteration_unittest : recursion_to_iteration_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
