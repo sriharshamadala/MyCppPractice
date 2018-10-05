@@ -6,7 +6,7 @@ using namespace std;
 
 class RecursionToIterationTest : public ::testing::Test {
   protected:
-    list<Node<int>*> adjacency_list__1_;
+    list<Node<int>*> adjacency_list_1_;
     
     void SetUp () override {
       // Simple graph.
@@ -28,25 +28,25 @@ class RecursionToIterationTest : public ::testing::Test {
       node5->getChildren().push_front(make_pair(node4, 1));
 
       // populate the adjacency list
-      adjacency_list__1_.push_back(node0);
-      adjacency_list__1_.push_back(node1);
-      adjacency_list__1_.push_back(node2);
-      adjacency_list__1_.push_back(node3);
-      adjacency_list__1_.push_back(node4);
-      adjacency_list__1_.push_back(node5);
-      adjacency_list__1_.push_back(node6);
+      adjacency_list_1_.push_back(node0);
+      adjacency_list_1_.push_back(node1);
+      adjacency_list_1_.push_back(node2);
+      adjacency_list_1_.push_back(node3);
+      adjacency_list_1_.push_back(node4);
+      adjacency_list_1_.push_back(node5);
+      adjacency_list_1_.push_back(node6);
     }
 
     void TearDown () override {
-      for (auto node : adjacency_list__1_) {
+      for (auto node : adjacency_list_1_) {
         delete node;
       }
     }
 };
 
 TEST_F (RecursionToIterationTest, calculateDepth) {
-  Graph<int> my_graph(adjacency_list__1_);
+  Graph<Node<int>> my_graph(adjacency_list_1_);
   my_graph.printAdjacencyList();
   Recursion<Node<int>*> maxDepth;
-  EXPECT_EQ(3, maxDepth(adjacency_list__1_.front()));
+  EXPECT_EQ(3, maxDepth(adjacency_list_1_.front()));
 }

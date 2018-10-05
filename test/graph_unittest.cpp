@@ -5,8 +5,8 @@ using namespace std;
 
 class GraphTest : public ::testing::Test {
   protected:
-    list<Node<int>*> adjacency_list__1_;
-    list<Node<char>*> adjacency_list__2_;
+    list<Node<int>*> adjacency_list_1_;
+    list<DijkstraNode<char>*> adjacency_list_2_;
     
     void SetUp () override {
       // Simple graph.
@@ -31,25 +31,25 @@ class GraphTest : public ::testing::Test {
       node6->getChildren().push_front(make_pair(node5, 1));
 
       // populate the adjacency list
-      adjacency_list__1_.push_back(node0);
-      adjacency_list__1_.push_back(node1);
-      adjacency_list__1_.push_back(node2);
-      adjacency_list__1_.push_back(node3);
-      adjacency_list__1_.push_back(node4);
-      adjacency_list__1_.push_back(node5);
-      adjacency_list__1_.push_back(node6);
+      adjacency_list_1_.push_back(node0);
+      adjacency_list_1_.push_back(node1);
+      adjacency_list_1_.push_back(node2);
+      adjacency_list_1_.push_back(node3);
+      adjacency_list_1_.push_back(node4);
+      adjacency_list_1_.push_back(node5);
+      adjacency_list_1_.push_back(node6);
 
       // Bigger graph
       // create nodes
-      Node<char> *nodea = new Node<char>('a');
-      Node<char> *nodeb = new Node<char>('b');
-      Node<char> *nodec = new Node<char>('c');
-      Node<char> *noded = new Node<char>('d');
-      Node<char> *nodee = new Node<char>('e');
-      Node<char> *nodef = new Node<char>('f');
-      Node<char> *nodeg = new Node<char>('g');
-      Node<char> *nodeh = new Node<char>('h');
-      Node<char> *nodei = new Node<char>('i');
+      DijkstraNode<char> *nodea = new DijkstraNode<char>('a');
+      DijkstraNode<char> *nodeb = new DijkstraNode<char>('b');
+      DijkstraNode<char> *nodec = new DijkstraNode<char>('c');
+      DijkstraNode<char> *noded = new DijkstraNode<char>('d');
+      DijkstraNode<char> *nodee = new DijkstraNode<char>('e');
+      DijkstraNode<char> *nodef = new DijkstraNode<char>('f');
+      DijkstraNode<char> *nodeg = new DijkstraNode<char>('g');
+      DijkstraNode<char> *nodeh = new DijkstraNode<char>('h');
+      DijkstraNode<char> *nodei = new DijkstraNode<char>('i');
 
       // add links
       nodea->getChildren().push_front(make_pair(nodeb, 5));
@@ -73,46 +73,46 @@ class GraphTest : public ::testing::Test {
       nodeh->getChildren().push_front(make_pair(nodec, 2));
       
       // populate the adjacency list
-      adjacency_list__2_.push_back(nodea);
-      adjacency_list__2_.push_back(nodeb);
-      adjacency_list__2_.push_back(nodec);
-      adjacency_list__2_.push_back(noded);
-      adjacency_list__2_.push_back(nodee);
-      adjacency_list__2_.push_back(nodef);
-      adjacency_list__2_.push_back(nodeg);
-      adjacency_list__2_.push_back(nodeh);
-      adjacency_list__2_.push_back(nodei);
+      adjacency_list_2_.push_back(nodea);
+      adjacency_list_2_.push_back(nodeb);
+      adjacency_list_2_.push_back(nodec);
+      adjacency_list_2_.push_back(noded);
+      adjacency_list_2_.push_back(nodee);
+      adjacency_list_2_.push_back(nodef);
+      adjacency_list_2_.push_back(nodeg);
+      adjacency_list_2_.push_back(nodeh);
+      adjacency_list_2_.push_back(nodei);
     }
 
     void TearDown () override {
-      for (auto node : adjacency_list__1_) {
+      for (auto node : adjacency_list_1_) {
         delete node;
       }
-      for (auto node : adjacency_list__2_) {
+      for (auto node : adjacency_list_2_) {
         delete node;
       }
     }
 };
 
 TEST_F (GraphTest, printAdjacencyList) {
-  Graph<char> my_graph(adjacency_list__2_);
+  Graph<Node<int>> my_graph(adjacency_list_1_);
   my_graph.printAdjacencyList();
 }
 
 TEST_F (GraphTest, printDFS) {
-  Graph<char> my_graph(adjacency_list__2_);
-  my_graph.printDFS(adjacency_list__2_.front());
+  Graph<Node<int>> my_graph(adjacency_list_1_);
+  my_graph.printDFS(adjacency_list_1_.front());
 }
 
 TEST_F (GraphTest, printBFS) {
-  Graph<char> my_graph(adjacency_list__2_);
-  my_graph.printBFS(adjacency_list__2_.front());
+  Graph<Node<int>> my_graph(adjacency_list_1_);
+  my_graph.printBFS(adjacency_list_1_.front());
 }
 
 TEST_F (GraphTest, dijkstra) {
-  Graph<char> my_graph(adjacency_list__2_);
-  my_graph.shortestPath(adjacency_list__2_.front(), adjacency_list__2_.back());
-  auto it = adjacency_list__2_.begin();
+  Graph<DijkstraNode<char>> my_graph(adjacency_list_2_);
+  shortestPath<char>(adjacency_list_2_.front(), adjacency_list_2_.back(), adjacency_list_2_);
+  auto it = adjacency_list_2_.begin();
   EXPECT_EQ((*it)->getShortestPath(), 0);
   it++;
   EXPECT_EQ((*it)->getShortestPath(), 4);
