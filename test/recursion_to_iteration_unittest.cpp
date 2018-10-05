@@ -45,8 +45,8 @@ class RecursionToIterationTest : public ::testing::Test {
 };
 
 TEST_F (RecursionToIterationTest, calculateDepth) {
-  Graph<Node<int>> my_graph(adjacency_list_1_);
-  my_graph.printAdjacencyList();
+  Graph<Node<int>> my_graph;
+  printAdjacencyList<Node<int>>(adjacency_list_1_);
   Recursion<Node<int>*> maxDepth;
   EXPECT_EQ(3, maxDepth(adjacency_list_1_.front()));
 }

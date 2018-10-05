@@ -76,25 +76,7 @@ class DijkstraNode : public Node<T> {
 
 template <typename T>
 class Graph {
-  private:
-    list<T*> adjacency_list_;
-  
   public:
-    Graph (list<T*>& adjacency_list) {
-      adjacency_list_ = adjacency_list;
-    }
-    
-    void printAdjacencyList () {
-      for (auto node : adjacency_list_) {
-        cout << node->getKey() << ": ";
-        auto temp_pair_list = node->getChildren();
-        for (auto temp_pair : temp_pair_list) {
-          cout << (temp_pair.first)->getKey() << " ";
-        }
-        cout << endl;
-      }
-    }
-
     void printDFS (T *root) {
       cout << root->getKey() << endl;
       root->visited();
@@ -126,6 +108,19 @@ class Graph {
       }
     }
 };
+
+// Utility functions
+template<typename T>
+void printAdjacencyList (list<T*>& adjacency_list) {
+  for (auto node : adjacency_list) {
+    cout << node->getKey() << ": ";
+    auto temp_pair_list = node->getChildren();
+    for (auto temp_pair : temp_pair_list) {
+      cout << (temp_pair.first)->getKey() << " ";
+    }
+    cout << endl;
+  }
+}
 
 // Needed for Dijkstra
 template <typename T>
