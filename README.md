@@ -5,6 +5,8 @@ Contains C++ implementation of the following algorithms:
 * **graph.h:** DFS, BFS, Dijkstra's shortest path.
 * **recursion_to_iteration.cpp:** A generic approach to convert a recursive algorithm into an iterative algorithm by approximately simulating a program stack. 
 * **disjoint_set.h:** Implementation of Union() and Find() operations on a disjoint datastructure. Useful for cycle detection, common component analysis, etc.
+* **trie.h:** My implementation of Trie datastructure.
+* **towers_of_hanoi.cpp:** A recursive solution of the classic towers of Hanoi problem.
 * **select_sort.h:** Select sort algorithm.
 * **bubble_sort.h:** Bubble sort algorithm.
 * **quick_sort.h:** Quick sort algorithm.
