@@ -95,7 +95,6 @@ class GraphTest : public ::testing::Test {
 };
 
 TEST_F (GraphTest, printAdjacencyList) {
-  Graph<Node<int>> my_graph;
   printAdjacencyList<Node<int>>(adjacency_list_1_);
 }
 
@@ -110,7 +109,6 @@ TEST_F (GraphTest, printBFS) {
 }
 
 TEST_F (GraphTest, dijkstra) {
-  Graph<DijkstraNode<char>> my_graph;
   shortestPath<char>(adjacency_list_2_.front(), adjacency_list_2_.back(), adjacency_list_2_);
   auto it = adjacency_list_2_.begin();
   EXPECT_EQ((*it)->getShortestPath(), 0);

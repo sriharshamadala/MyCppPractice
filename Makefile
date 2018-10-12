@@ -36,6 +36,7 @@ TESTS = bubble_sort_unittest \
 				graph_unittest \
 				expression_evaluation_unittest \
 				disjoint_set_unittest \
+				trie_unittest \
 				recursion_to_iteration_unittest
 
 # All Google Test headers.  Usually you shouldn't change this
@@ -118,3 +119,10 @@ recursion_to_iteration_unittest.o : $(TEST_DIR)/recursion_to_iteration_unittest.
 recursion_to_iteration_unittest : recursion_to_iteration_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
+# Trie unit test
+trie_unittest.o : $(TEST_DIR)/trie_unittest.cpp \
+	$(USER_DIR)/trie.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/trie_unittest.cpp
+
+trie_unittest : trie_unittest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@

@@ -13,25 +13,20 @@
 using namespace std;
 
 template <typename T>
-class Node {
+class BaseNode {
   private:
     T key_;
-    // Each edge has a destination and a weight.
-    list<pair<Node<T>*, int>> children_;
     
     // Augments
     bool is_visited_;      // Needed for graph traversal
   
   public:
-    Node (T key) {
+    BaseNode (T key) {
       key_ = key;
       is_visited_ = false;
     }
     T getKey () {
       return key_;
-    }
-    list<pair<Node<T>*, int>>& getChildren () {
-      return children_;
     }
     bool isVisited () {
       return is_visited_;
@@ -39,12 +34,42 @@ class Node {
     void visited () {
       is_visited_ = true;
     }
+
+    // Make it pure virtual so that this object cannot be instantiated.
+    //virtual void getChildren () = 0;
 };
 
 template <typename T>
-class DijkstraNode : public Node<T> {
+class Node : public BaseNode<T> {
   private:
-    T key_;
+    // Each edge has a destination and a weight.
+    list<pair<Node<T>*, int>> children_;
+    
+  public:
+    Node (T key) : BaseNode<T>(key) {}
+
+    list<pair<Node<T>*, int>>& getChildren () {
+      return children_;
+    }
+};
+
+template <typename T>
+class UnweightedNode : public BaseNode<T> {
+  private:
+    // Each edge has only destination.
+    list<UnweightedNode<T>*> children_;
+    
+  public:
+    UnweightedNode (T key) : BaseNode<T>(key) {}
+    
+    list<UnweightedNode<T>*>& getChildren () {
+      return children_;
+    }
+};
+
+template <typename T>
+class DijkstraNode : public BaseNode<T> {
+  private:
     // Each edge has a destination and a weight.
     list<pair<DijkstraNode<T>*, int>> children_;
 
@@ -53,7 +78,7 @@ class DijkstraNode : public Node<T> {
     DijkstraNode<T>* prev_node_;
 
   public:
-    DijkstraNode (T key) : Node<T>(key) {
+    DijkstraNode (T key) : BaseNode<T>(key) {
       prev_node_ = NULL;
       shortest_path_ = 0;
     }
@@ -103,6 +128,41 @@ class Graph {
           if (!((temp_pair.first)->isVisited())) {
             my_deque.push_back(temp_pair.first);
             temp_pair.first->visited();
+          }
+        }
+      }
+    }
+};
+
+template <typename T>
+class UnweightedGraph {
+  public:
+    void printDFS (UnweightedNode<T> *root) {
+      cout << root->getKey() << endl;
+      root->visited();
+      auto children = root->getChildren();
+      for (auto child : children) {
+        if (!child->isVisited()) {
+          printDFS(child);
+        }
+      }
+    }
+
+    void printBFS (UnweightedNode<T> *root) {
+      deque<T*> my_deque;
+      my_deque.push_back(root);
+      root->visited();
+
+      while (!my_deque.empty()) {
+        UnweightedNode<T> * temp_node = my_deque.front();
+        my_deque.pop_front();
+        cout << temp_node->getKey() << endl;
+        
+        auto children = temp_node->getChildren();
+        for (auto child : children) {
+          if (!child->isVisited()) {
+            my_deque.push_back(child);
+            child->visited();
           }
         }
       }
